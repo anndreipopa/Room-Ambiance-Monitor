@@ -8,6 +8,9 @@ const int sensorPin = 34;
 const int valoareIntuneric = 4095;
 const int valoareLuminaMaxima = 0;
 const float reglajTemp = -1.2;
+
+const int ledPin = 17;
+
 /*
 const int sensorPinSol = 35;
 const int valoareSolUscat = 4095;
@@ -57,6 +60,7 @@ int procentajUmiditate = map(valoareSol, valoareSolUscat, valoareSolUmed, 0, 100
 } */
 void setup() {
   // put your setup code here, to run once:
+  pinMode(ledPin, OUTPUT);
   Serial.begin(115200);
   delay(1000);
   Wire.begin(21, 22);
@@ -74,6 +78,14 @@ void loop(){
   int lumina = getProcentajLumina();
   DateAer dateAer = getDateAer();
 
+  if(senzorAer.read()){
+    digitalWrite(ledPin, HIGH);
+    delay(100);
+    digitalWrite(ledPin, LOW);
+  } else{
+    digitalWrite(ledPin, LOW);
+  }
+
   Serial.print("Lumina: ");
   Serial.print(lumina);
   Serial.println("%");
@@ -86,6 +98,7 @@ void loop(){
     Serial.print("Umiditate: ");
     Serial.print(dateAer.umiditate, 1);
     Serial.println("%");
+    Serial.println(" ");
   } else {
     Serial.println("Eroare la citirea datelor de la senzorul de aer!");
   }
