@@ -22,7 +22,7 @@ A comprehensive IoT-powered station built on the ESP32 microcontroller, designed
     - **HTU21D:** I²C sensor for air temperature and humidity.
     - **LDR Module:** Analog sensor for light intensity.
 - **Expansion Board:** A custom breakout board to simplify sensor connections without a breadboard.
-- **Breadboard:**: A simple, classic breadboard of any kind to help with connections.
+- **Breadboard:** A simple, classic breadboard of any kind to help with connections.
 - **LED and resistor:** An LED of any color and a 220 Ohm resistor
 
 ### Firmware
