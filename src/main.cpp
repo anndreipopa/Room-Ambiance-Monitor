@@ -1,9 +1,29 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <SHT2x.h>
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <PubSubClient.h>
+#include <secrets.h>
+// config retea si MQTT
+const char* ssid = WIFI_SSID;
+const char* wifiPassword = WIFI_PASSWORD;
+const char* mqttServer = MQTT_HOST;
+const int mqttPort = MQTT_PORT;
+const char* mqttUser = MQTT_USER;
+const char* mqttPassword = MQTT_PASSWORD;
+
+//topic MQTT
+const char* mqttTopic = MQTT_TOPIC;
+const char* caCert = aCACert;
+
+WiFiClientSecure espClient;
+PubSubClient client(espClient);
+
 
 SHT2x senzorAer;
 
+//initializare pini si date pentru senzorul de lumina si LED
 const int sensorPin = 34;
 const int valoareIntuneric = 4095;
 const int valoareLuminaMaxima = 0;
@@ -58,6 +78,33 @@ int procentajUmiditate = map(valoareSol, valoareSolUscat, valoareSolUmed, 0, 100
   Serial.println("%");
 
 } */
+// setup WiFi
+void wifiSetup(){
+  Serial.print("Conectare la retea WiFi: ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, wifiPassword);
+  while (WiFi.status() != WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Wi-Fi conectat! IP:");
+  Serial.println(WiFi.localIP());
+}
+// setup MQTT
+void mqttSetup(){
+  Serial.print("Conectare la broker MQTT: ");
+  String clientID = "ESP32Client-"; //ID UNIC pentru client
+  clientID += String(random(0xffff), HEX);
+  if(client.connect(clientID.c_str(), mqttUser, mqttPassword)){
+    Serial.println("Conectat la broker MQTT!");
+  }else{
+    Serial.print("Eroare la conectarea la broker MQTT: ");
+    Serial.println(client.state());
+    Serial.println(" Reincercare in 5 secunde...");
+    delay(5000);
+  }
+  }
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(ledPin, OUTPUT);
@@ -65,6 +112,10 @@ void setup() {
   delay(1000);
   Wire.begin(21, 22);
   senzorAer.begin();
+
+  wifiSetup();
+  espClient.setCACert(caCert); // setam certificatul CA pentru conexiunea securizata
+  client.setServer(mqttServer, mqttPort);
   
   if(senzorAer.read()){
     Serial.println("Senzor aer initializat cu succes!");
@@ -75,9 +126,15 @@ void setup() {
 
 void loop(){
   // put your main code here, to run repeatedly:
+  if(!client.connected()){
+    mqttSetup();
+  }
+  client.loop(); // mentinem conexiunea MQTT activa
+  
   int lumina = getProcentajLumina();
   DateAer dateAer = getDateAer();
 
+  // cod pentru a aprinde LED-ul daca senzorii functioneaza corect.
   if(senzorAer.read()){
     digitalWrite(ledPin, HIGH);
     delay(100);
@@ -102,7 +159,16 @@ void loop(){
   } else {
     Serial.println("Eroare la citirea datelor de la senzorul de aer!");
   }
+    String mesaj = "{";
+    mesaj += "\"lumina\":" + String(lumina) + "%" + ",";
+    mesaj += "\"temperatura\":" + String(dateAer.temperatura, 1) + "C" +  ",";
+    mesaj += "\"umiditate\":" + String(dateAer.umiditate, 1) + "%" + ",";
+    mesaj += "}";
 
+    Serial.print("Publicare mesaj: ");
+    Serial.println(mesaj);
+    client.publish(mqttTopic, mesaj.c_str());
+    delay(5000); // asteptam 5 secunde inainte de urmato
   
-  delay(3000); // asteptam 3 secunde inainte de a citi din nou
+  
 }
