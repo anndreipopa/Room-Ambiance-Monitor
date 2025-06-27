@@ -160,9 +160,9 @@ void loop(){
     Serial.println("Eroare la citirea datelor de la senzorul de aer!");
   }
     String mesaj = "{";
-    mesaj += "\"lumina\":" + String(lumina) + "%" + ",";
-    mesaj += "\"temperatura\":" + String(dateAer.temperatura, 1) + "C" +  ",";
-    mesaj += "\"umiditate\":" + String(dateAer.umiditate, 1) + "%" + ",";
+    mesaj += "\"lumina\":" + String(lumina) + ",";
+    mesaj += "\"temperatura\":" + String(dateAer.temperatura, 1) + ",";
+    mesaj += "\"umiditate\":" + String(dateAer.umiditate, 1);
     mesaj += "}";
 
     Serial.print("Publicare mesaj: ");
