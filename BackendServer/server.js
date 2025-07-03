@@ -14,7 +14,7 @@ const io = new Server(server,{
         methods: ["GET", "POST"],
     }
 }); // initializez io ca o noua instanta a clasei Server, folosing serverul express ca argument
-const webPort = provess.env.PORT;;
+const webPort = process.env.PORT;;
 const path = require('path'); // import libraria path pentru a gestiona căile fișierelor
 const cors = require('cors'); // import libraria cors pentru a permite cereri cross-origin
 
