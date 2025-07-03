@@ -30,6 +30,12 @@ body {
     margin-top: 50px;
     margin-bottom: 50px;
 }
+h3{
+    font-size: 1rem;
+    font-weight: 400;
+    color: #0C7C59;
+    margin-top: 20px;
+}
 .cardcontainer{
     display: flex;
     flex-wrap: wrap;

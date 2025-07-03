@@ -12,7 +12,7 @@ const io = new Server(server); // initializez io ca o noua instanta a clasei Ser
 const webPort = 3000;
 const path = require('path'); // import libraria path pentru a gestiona căile fișierelor
 
-app.use(express.static(path.join(__dirname, '../client'))); // cer fisierele cerute de browser din directorul public
+app.use(express.static(path.join(__dirname, '../Frontend'))); // cer fisierele cerute de browser din directorul public
 
 const host = process.env.MQTT_HOST;
 const port = process.env.MQTT_PORT;
