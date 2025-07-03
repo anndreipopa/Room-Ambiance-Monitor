@@ -1,4 +1,4 @@
-const socket = io(); // initializez socket.io client
+const socket = io("https://room-ambiance-monitor.onrender.com"); // initializez socket.io client
 const temperatura = document.getElementById('valTemp');
 const umiditate = document.getElementById('valUmid');
 const lumina = document.getElementById('valLum');

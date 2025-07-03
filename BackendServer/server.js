@@ -8,11 +8,19 @@ const mqtt = require('mqtt'); // import libraria mqtt pentru a putea comunica cu
 
 const app = express();
 const server = http.createServer(app); // creăm un server HTTP folosind express
-const io = new Server(server); // initializez io ca o noua instanta a clasei Server, folosing serverul express ca argument
-const webPort = 3000;
+const io = new Server(server,{
+    cors: {
+        origin: "https://ramdashboard.netlify.app",
+        methods: ["GET", "POST"],
+    }
+}); // initializez io ca o noua instanta a clasei Server, folosing serverul express ca argument
+const webPort = provess.env.PORT;;
 const path = require('path'); // import libraria path pentru a gestiona căile fișierelor
+const cors = require('cors'); // import libraria cors pentru a permite cereri cross-origin
 
-app.use(express.static(path.join(__dirname, '../Frontend'))); // cer fisierele cerute de browser din directorul public
+app.use(cors({
+    origin: "https://ramdashboard.netlify.app", // specificăm origin-ul de unde sunt permise cererile
+})); // folosesc cors pentru a permite cereri cross-origin
 
 const host = process.env.MQTT_HOST;
 const port = process.env.MQTT_PORT;
