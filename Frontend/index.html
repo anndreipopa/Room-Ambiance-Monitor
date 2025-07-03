@@ -7,22 +7,41 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Room Ambiance Monitor</h1>
-    <h2>Sensor readings from my room!</h2>
-<div class="container-carduri"></div>
-    <div class="cardValori">
-        <h2>Temperatura</h2>
-        <p><span id="valTemp">--</span>Celsius</p>
-    </div>
-    <div class="cardValori">
-        <h2>Umiditate</h2>
-        <p><span id="valUmid">--</span>%</p>
-    </div>
-    <div class="cardValori">
-        <h2>Lumina</h2>
-        <p><span id="valLum">--</span>%</p>
-    </div>
-</div>
+    <!-- Page name // Navbar and Profile icon in the future -->
+     <div class="pageinfo">
+        <h1 class="pagetitle">Room Ambiance Monitor</h1>
+     </div>
+
+    <!-- Main content of the page, such as current readings, weather API and more -->
+<main>
+    <section class="live-readings">
+        <h2 class="sectiontitle">Live Readings</h2>
+        <div class="cardcontainer">
+            <div class="card">
+                <h2 class="cardtitle">Temperature</h2>
+                <p><span id="valTemp">--</span>°C</p>
+                <p>/graph will go here/</p>
+            </div>
+            <div class="card">
+                <h2 class="cardtitle">Humidity</h2>
+                <p><span id="valUmid">--</span>%</p>
+                <p>/graph will go here/</p>
+            </div>
+            <div class="card">
+                <h2 class="cardtitle">Light</h2>
+                <p><span id="valTemp">--</span>%</p>
+                <p>/graph will go here/</p>
+            </div>
+        </div>
+    </section>
+    <section class="weather-api">
+        <h2 class="sectiontitle">Local Weather</h2>
+        <div class="weather-container">
+            <p>Current Weather: <span id="weather">Not integrated yet</span></p>
+        </div>
+    </section>
+</main>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
 </body>
