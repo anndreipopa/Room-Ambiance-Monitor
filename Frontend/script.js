@@ -102,7 +102,7 @@ function getSegmentColors(data) {
 // Main function to fetch history and populate all charts
 async function fetchAndDisplayHistory() {
     try {
-        const response = await fetch(`${BACKEND_URL}api/history`);
+        const response = await fetch(`${BACKEND_URL}/api/history`);
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);
         }
