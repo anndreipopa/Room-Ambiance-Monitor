@@ -21,17 +21,22 @@
             <div class="card">
                 <h2 class="cardtitle">Temperature</h2>
                 <p><span id="valTemp">--</span>°C</p>
-                <p>/graph will go here/</p>
+                <div class="graph">
+                    <canvas id="tempChart"></canvas>
+            </div>
             </div>
             <div class="card">
                 <h2 class="cardtitle">Humidity</h2>
                 <p><span id="valUmid">--</span>%</p>
-                <p>/graph will go here/</p>
+                <div class="graph">
+                    <canvas id="humChart"></canvas>
+            </div>
             </div>
             <div class="card">
                 <h2 class="cardtitle">Light</h2>
                 <p><span id="valLum">--</span>%</p>
-                <p>/graph will go here/</p>
+                <div class="graph">
+                    <canvas id="lightChart"></canvas>
             </div>
         </div>
     </section>
@@ -44,6 +49,8 @@
 </main>
 
 <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

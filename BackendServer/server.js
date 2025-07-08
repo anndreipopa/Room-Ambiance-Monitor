@@ -10,7 +10,7 @@ const path = require('path'); // import libraria path pentru a gestiona căile f
 
 const app = express();
 const server = http.createServer(app); // creăm un server HTTP folosind express
-const webPort = process.env.PORT;
+const webPort = process.env.PORT || 3000; // portul pe care va asculta serverul, dacă nu este specificat în variabilele de mediu, va folosi 3000
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL, // folosim variabila de mediu pentru
     ssl:{
@@ -18,22 +18,36 @@ const pool = new Pool({
     }
 });
 
-const io = new Server(server,{
-    cors: {
-        origin: "https://ramdashboard.netlify.app",
-        methods: ["GET", "POST"],
-    }
-}); // initializez io ca o noua instanta a clasei Server, folosing serverul express ca argument
+const allowedOrigins = [
+    "https://ramdashboard.netlify.app", // Pentru productie
+    "http://127.0.0.1:5500",           // Pentru testare locala cu Live Server
+    "http://localhost:5500"             // O alternativa pentru Live Server
+];
 
+// 2. Definim o singura data optiunile de configurare
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Permite cererile daca originea este in lista sau daca nu exista origine (ex: Postman)
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ["GET", "POST"],
+};
 
-app.use(cors({
-    origin: "https://ramdashboard.netlify.app", // specificăm origin-ul de unde sunt permise cererile
-})); // folosesc cors pentru a permite cereri cross-origin
+// 3. Aplicam ACEEASI configurare si la Express si la Socket.IO
+app.use(cors(corsOptions));
+
+const io = new Server(server, {
+    cors: corsOptions
+});
 
 let latestReadings = null;
-const savingInterval = 60 * 5000; // intervalul de salvare a datelor în baza de date (5 minute)
+const savingInterval = 60 * 1000; // intervalul de salvare a datelor în baza de date (10 minute)
 
-app.get('/api/hisory', async (req, res) => {
+app.get('/api/history', async (req, res) => {
     try {
         console.log("Cerere GET la /api/history");
         const query = 'SELECT temperature, humidity, light, created_at FROM sensor_data ORDER BY created_at DESC LIMIT 100';
@@ -41,8 +55,9 @@ app.get('/api/hisory', async (req, res) => {
         res.json(rows); // trimitem ultimele 100 de înregistrări ca răspuns
     } catch (err) {
         console.error("Eroare la obținerea datelor din baza de date:", err);
-    }
-})
+        res.status(500).json({ error: "Eroare la interogarea bazei de date" }); // Trimite un raspuns de eroare!
+        }
+    });
 
 async function initDatabase(){
     const createTableQuery = `
