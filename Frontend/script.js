@@ -4,7 +4,7 @@ const temperatura = document.getElementById('valTemp');
 const umiditate = document.getElementById('valUmid');
 const lumina = document.getElementById('valLum');
 const lastUpdated = document.getElementById('lastUpdated');
-const BACKEND_URL = "https://room-ambiance-monitor.onrender.com/api/history"; // URL-ul backend-ului
+const BACKEND_URL = "https://room-ambiance-monitor.onrender.com"; // URL-ul backend-ului
 
 let lastTimeStamp = null;
 
