@@ -167,5 +167,5 @@ function updateChartsWithLiveData(data) {
     updateSingleChart(humChart, data.umiditate);
     updateSingleChart(lightChart, data.lumina);
 }
-setInterval(fetchAndDisplayHistory, 60*1000);
+setInterval(fetchAndDisplayHistory, 60*10000);
 fetchAndDisplayHistory();
