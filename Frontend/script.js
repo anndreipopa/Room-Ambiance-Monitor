@@ -53,15 +53,17 @@ function createChartConfig(label, yAxisText, color) {
                 label: label,
                 data: [],
                 borderColor: color,
-                borderWidth: 2,
+                borderWidth: 4,
                 tension: 0.2,
                 pointRadius: 1,
                 pointBackgroundColor: 'rgba(255, 255, 255, 0.1)',
-                pointBorderColor: 'rgba(255, 255, 255, 0.1)',
+                pointBorderColor: 'rgba(0, 0, 0, 0.2)',
                 pointHoverradius: 3,
             }]
         },
         options: {
+                responsive: true,
+                maintainAspectRatio: false,
             scales: {
                 x: {
                     type: 'time',
