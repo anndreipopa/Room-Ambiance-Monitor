@@ -45,7 +45,7 @@ const io = new Server(server, {
 });
 
 let latestReadings = null;
-const savingInterval = 30 * 60 * 10000; // intervalul de salvare a datelor în baza de date (30 minute)
+const savingInterval = 30 * 60 * 1000; // intervalul de salvare a datelor în baza de date (30 minute)
 
 app.get('/api/history', async (req, res) => {
     try {
@@ -58,6 +58,10 @@ app.get('/api/history', async (req, res) => {
         res.status(500).json({ error: "Eroare la interogarea bazei de date" }); // Trimite un raspuns de eroare!
         }
     });
+
+app.get('/api/keep-alive', (req, res) => {
+    res.status(200).json({ status: "Keep server ON" });
+});
 
 async function initDatabase(){
     const createTableQuery = `
