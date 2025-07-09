@@ -40,11 +40,11 @@ h3{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 100px;
+    gap: 50px;
 }
 .card{
-    width: 25rem;
-    height: 25rem;
+    width: 22rem;
+    height: 22rem;
     background-color: white;
     border-radius: 15px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);

@@ -45,7 +45,7 @@ const io = new Server(server, {
 });
 
 let latestReadings = null;
-const savingInterval = 60 * 10000; // intervalul de salvare a datelor în baza de date (10 minute)
+const savingInterval = 60 * 30000; // 30 de minute în milisecunde 
 
 app.get('/api/history', async (req, res) => {
     try {

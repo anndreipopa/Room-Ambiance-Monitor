@@ -59,11 +59,17 @@ function createChartConfig(label, yAxisText, color) {
                 pointBackgroundColor: 'rgba(255, 255, 255, 0.1)',
                 pointBorderColor: 'rgba(0, 0, 0, 0.2)',
                 pointHoverradius: 3,
+                hitRadius: 10,
             }]
         },
         options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
             scales: {
                 x: {
                     type: 'time',
@@ -169,5 +175,5 @@ function updateChartsWithLiveData(data) {
     updateSingleChart(humChart, data.umiditate);
     updateSingleChart(lightChart, data.lumina);
 }
-setInterval(fetchAndDisplayHistory, 60*10000);
 fetchAndDisplayHistory();
+setInterval(fetchAndDisplayHistory, 60*30000); // Update charts every 30 minutes
