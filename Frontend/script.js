@@ -176,4 +176,4 @@ function updateChartsWithLiveData(data) {
     updateSingleChart(lightChart, data.lumina);
 }
 fetchAndDisplayHistory();
-setInterval(fetchAndDisplayHistory, 60*10000); // Update charts every 30 minutes
+setInterval(fetchAndDisplayHistory, 30*60*10000); // Refresh history every 30 minutes
