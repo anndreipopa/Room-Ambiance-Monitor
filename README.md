@@ -41,7 +41,6 @@ A comprehensive IoT platform built on the ESP32 microcontroller, designed to mon
 
 Connecting the components to the ESP32 is straightforward. Follow the wiring diagram and pinout table below for a successful setup.
 
-*(A Fritzing diagram or a real photo of the circuit would be a great addition here.)*
 
 | Component          | Component Pin    | Connect to ESP32 Pin    |
 | ------------------ | ---------------- | ----------------------- |
