@@ -1,10 +1,13 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <SHT2x.h>
+#include <BH1750.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <secrets.h>
+#include <string>
+using namespace std;
 // config retea si MQTT
 const char* ssid = WIFI_SSID;
 const char* wifiPassword = WIFI_PASSWORD;
@@ -22,6 +25,7 @@ PubSubClient client(espClient);
 
 
 SHT2x senzorAer;
+BH1750 senzorLumina;
 
 //initializare pini si date pentru senzorul de lumina si LED
 const int sensorPin = 34;
@@ -43,14 +47,33 @@ struct DateAer{
   bool citireReusita;
 };
 
-int  getProcentajLumina(){
+int  getLumina(){
     // Citire senzor lumina
-  int valoareLumina = analogRead(sensorPin);
-  
-  int procentajLumina = map(valoareLumina, valoareIntuneric, valoareLuminaMaxima, 0, 100);
-  procentajLumina = constrain(procentajLumina, 0, 100);
-
-  return procentajLumina;
+  float valoareLumina = senzorLumina.readLightLevel();
+  // Verificam daca citirea a fost reusita
+  if(valoareLumina < 0){
+    Serial.println("Eroare la citirea senzorului de lumina!");
+    return -1; // eroare
+  }
+  return valoareLumina; // returnam valoarea luminii;
+}
+string getDescriereLumina(float valoareLumina){
+  if(valoareLumina < 5){
+    return "🌑 Pitch Black";
+  }
+  if(valoareLumina < 30){
+    return "🌙 Very Dim Light";
+  }
+  if(valoareLumina < 120){
+    return "🌆 Ambient Light";
+  }
+  if(valoareLumina < 300){
+    return "💡 Normal Light";
+  }
+  if(valoareLumina < 500){
+    return "🔆 Bright Light";
+  }
+  return "☀️ Very Bright Light";
 }
 
   DateAer getDateAer(){
@@ -112,6 +135,7 @@ void setup() {
   delay(1000);
   Wire.begin(21, 22);
   senzorAer.begin();
+  senzorLumina.begin();
 
   wifiSetup();
   espClient.setCACert(caCert); // setam certificatul CA pentru conexiunea securizata
@@ -122,6 +146,11 @@ void setup() {
   } else {
     Serial.println("Eroare la initializarea senzorului de aer!");
   }
+  if(senzorLumina.begin()){
+    Serial.println("Senzor lumina initializat cu succes!");
+  } else {
+    Serial.println("Eroare la initializarea senzorului de lumina!");
+  }
 }
 
 void loop(){
@@ -131,7 +160,8 @@ void loop(){
   }
   client.loop(); // mentinem conexiunea MQTT activa
   
-  int lumina = getProcentajLumina();
+  int lumina = getLumina();
+  string descriere = getDescriereLumina(lumina);
   DateAer dateAer = getDateAer();
 
   // cod pentru a aprinde LED-ul daca senzorii functioneaza corect.
@@ -147,6 +177,9 @@ void loop(){
   Serial.print(lumina);
   Serial.println("%");
 
+  Serial.print("Descriere lumina: ");
+  Serial.println(descriere.c_str());
+
   if(dateAer.citireReusita){
     Serial.print("Temperatura: ");
     Serial.print(dateAer.temperatura, 1);
@@ -161,6 +194,7 @@ void loop(){
   }
     String mesaj = "{";
     mesaj += "\"lumina\":" + String(lumina) + ",";
+    mesaj += "\"descriereLumina\":\"" + String(descriere.c_str()) + "\",";
     mesaj += "\"temperatura\":" + String(dateAer.temperatura, 1) + ",";
     mesaj += "\"umiditate\":" + String(dateAer.umiditate, 1);
     mesaj += "}";

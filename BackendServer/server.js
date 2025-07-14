@@ -60,6 +60,7 @@ app.get('/api/history', async (req, res) => {
     });
 
 app.get('/api/keep-alive', (req, res) => {
+    console.log("Cerere /api/keep-alive primita");
     res.status(200).json({ status: "Keep server ON" });
 });
 

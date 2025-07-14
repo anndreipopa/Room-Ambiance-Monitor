@@ -3,6 +3,7 @@ const socket = io("https://room-ambiance-monitor.onrender.com"); // initializez 
 const temperatura = document.getElementById('valTemp');
 const umiditate = document.getElementById('valUmid');
 const lumina = document.getElementById('valLum');
+const lumDescription = document.getElementById('valLumDesc'); // element for light description
 const lastUpdated = document.getElementById('lastUpdated');
 const BACKEND_URL = "https://room-ambiance-monitor.onrender.com"; // URL-ul backend-ului
 
@@ -22,6 +23,9 @@ socket.on('sensorData', (data) => {
     if(data.lumina !== undefined) {
         lumina.textContent = data.lumina;
 
+    }
+    if(data.descriereLumina !== undefined) {
+        lumDescription.textContent = data.descriereLumina;
     }
 
 });
