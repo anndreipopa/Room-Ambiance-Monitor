@@ -70,12 +70,13 @@ app.get('/weather', async (req, res) => {
     const weatherAPI = process.env.WEATHER_API_KEY;
     
     
-    const weatherURL = 'https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=-${lon}&appid=${weatherAPI}&units=metric';
+    const weatherURL = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${weatherAPI}&units=metric`;
 
     try{
         const response = await fetch(weatherURL);
         const weatherData = await response.json();
         res.json(weatherData);
+        console.log("Cerere GET la /weather a fost procesata cu succes folosind ${weatherAPI}");
     }
     catch (error) {
         console.error("Eroare la obținerea datelor meteo:", error);
