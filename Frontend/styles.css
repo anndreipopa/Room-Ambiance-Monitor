@@ -37,10 +37,18 @@ h3{
     margin-top: 20px;
 }
 .cardcontainer{
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 50px;
+}
+.weatherContainer{
+    min-height: 22rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
 }
 .card{
     width: 22rem;
@@ -52,7 +60,65 @@ h3{
     padding: 1rem;
 
 }
-.card:hover{
+.weathercard{
+    flex: 1;
+    width: 24rem;
+    height: 5rem;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+.weatherinfo-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+.weatherinfo-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+}
+.weather-icon{
+    width: 75px;
+    height: 75px;
+}
+.weatherinfo-box h2, .weatherinfo-box h3{
+    margin: 0;
+    padding: 0;
+    line-height: 1.3;
+    color: #0C7C59;
+}
+.todayForecast, .weeklyForecast{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+}
+h3.weathertime, h3.weatherday{
+    margin-top: 0.5rem;
+}
+h3.dailytemp{
+    margin-bottom: 0.5rem;
+}
+.todayForecast-contents, .weeklyForecast-contents{
+    line-height: 0.1;
+    margin: 0;
+    padding: 0;
+}
+.weather-icon-small{
+    width: 25px;
+    height: 25px;
+}
+.card:hover, .weathercard:hover {
     scale: 1.05;
 }
 .graph{
