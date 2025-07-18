@@ -70,7 +70,7 @@ app.get('/weather', async (req, res) => {
     const weatherAPI = process.env.WEATHER_API_KEY;
     
     
-    const weatherURL = 'https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=-${lon}&appid={weatherAPI}&units=metric';
+    const weatherURL = 'https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=-${lon}&appid=${weatherAPI}&units=metric';
 
     try{
         const response = await fetch(weatherURL);
