@@ -1,111 +1,101 @@
-# Room Ambiance Monitor
+# IoT Smart Irrigation System Prototype
 
 [![ESP32](https://img.shields.io/badge/Hardware-ESP32-blueviolet.svg)](https://www.espressif.com/en/products/socs/esp32)
 [![PlatformIO](https://img.shields.io/badge/Firmware-PlatformIO-orange.svg)](https://platformio.org/)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js-green.svg)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue.svg)](https://www.postgresql.org/)
+[![JavaScript](https://img.shields.io/badge/Frontend-Vanilla_JS-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![MQTT](https://img.shields.io/badge/Protocol-MQTT-lightgrey.svg)](https://mqtt.org/)
-[![Express.js](https://img.shields.io/badge/Framework-Express.js-yellow.svg)](https://expressjs.com/)
-[![Socket.IO](https://img.shields.io/badge/Real--Time-Socket.IO-blue.svg)](https://socket.io/)
 
-A comprehensive IoT platform built on the ESP32 microcontroller, designed to monitor key environmental conditions and display them in real-time on a web dashboard. This project serves as a foundational layer for a future full-stack smart gardening system, showcasing a modular and scalable approach to IoT development.
+An end-to-end **Smart Irrigation System** designed to automate plant care. The current deployed prototype provides the core functionality, successfully streaming, storing, and visualizing live environmental sensor data on a globally accessible web dashboard.
 
-*(Images coming soon!)*
+*Images coming soon!*
 
 ## 🌟 Core Features
 
--   **End-to-End Real-Time Monitoring:** Continuously reads, processes, and transmits data from the sensor to the browser with minimal latency.
--   **Multi-Sensor System:**
-    -   **Air Temperature & Humidity:** Utilizes a high-precision HTU21D I²C sensor.
-    -   **Ambient Light Intensity:** Measures ambient light levels using a Light-Dependent Resistor (LDR) module.
--   **Secure IoT Communication:** Implements the MQTT protocol over a secure TLS connection to publish sensor data to a cloud broker (HiveMQ).
--   **Node.js Backend:** A robust backend server that subscribes to MQTT topics, processes incoming data, and broadcasts it to web clients.
--   **Live Web Dashboard:** A dynamic web-based frontend using HTML, CSS, and JavaScript that visualizes real-time data via Socket.IO.
+-   **Full-Stack Real-Time Monitoring:** A complete, deployed data pipeline from a physical ESP32 sensor, through a secure cloud broker, to a live web dashboard.
+-   **Precision Multi-Sensor System:**
+    -   **Air Temperature & Humidity:** Utilizes a high-precision **HTU21D** I²C sensor.
+    -   **Ambient Light Intensity:** Employs a **BH1750** digital sensor to provide accurate illuminance readings in **Lux**.
+-   **Data Persistence & Visualization:** Sensor data is periodically stored in a **PostgreSQL** database and rendered in dynamic, trend-colored historical charts using **Chart.js**.
+-   **Secure & Robust Communication:** Implements the MQTT protocol over a secure TLS connection and a real-time WebSocket layer for instant data delivery to the frontend.
 
 ## 🛠️ Tech Stack
 
 ### Hardware
--   **Microcontroller:** ESP32 (on a 30-pin development board).
--   **Sensors:**
-    -   **HTU21D:** I²C sensor for air temperature and humidity.
-    -   **LDR Module:** Analog sensor for light intensity.
--   **Indicator:** A standard LED and a 220 Ohm resistor for status indication.
--   **Prototyping:** Breadboard and jumper wires.
+-   **Microcontroller:** ESP32
+-   **Sensors:** HTU21D (I²C), BH1750 (I²C)
 
 ### Software & Cloud
--   **Firmware:** **Arduino Framework** on **PlatformIO** IDE.
--   **Backend:** **Node.js** with **Express.js**, **Socket.IO**, and **MQTT.js**.
--   **Frontend:** Vanilla **HTML, CSS, and JavaScript**.
+-   **Firmware:** C++ on **Arduino Framework** with **PlatformIO**.
+-   **Backend:** **Node.js** with **Express.js** & **Socket.IO**.
+-   **Frontend:** **Vanilla HTML5, CSS3, and JavaScript** with **Chart.js**.
+-   **Database:** **PostgreSQL** (hosted on Render).
+-   **Deployment:** Backend on **Render**, Frontend on **Netlify**, with CI/CD from GitHub.
 -   **MQTT Broker:** **HiveMQ Cloud**.
+
+## 📁 Project Structure
+
+This repository is a monorepo containing all parts of the application:
+-   `/src`: Contains the C++ firmware for the ESP32, managed by PlatformIO.
+-   `/BackendServer`: The Node.js backend server.
+-   `/frontend`: The static web dashboard files (HTML, CSS, JS).
 
 ## 🔌 Hardware Setup & Wiring
 
-Connecting the components to the ESP32 is straightforward. Follow the wiring diagram and pinout table below for a successful setup.
+Both I2C sensors (HTU21D and BH1750) share the same I2C bus, simplifying the wiring.
 
-
-| Component          | Component Pin    | Connect to ESP32 Pin    |
-| ------------------ | ---------------- | ----------------------- |
-| **HTU21D Sensor**  | `SDA`            | `GPIO 21` (SDA)         |
-|                    | `SCL`            | `GPIO 22` (SCL)         |
-|                    | `VCC` / `VIN`    | `3.3V`                  |
-|                    | `GND`            | `GND`                   |
-| **LDR Sensor**     | `A0` (Analog Out)| `GPIO 34` (ADC1_CH6)    |
-|                    | `VCC` / `+`      | `3.3V`                  |
-|                    | `GND`            | `GND`                   |
-| **Status LED**     | Anode (long leg) | `GPIO 17`               |
-|                    | Cathode (short leg)| 220Ω Resistor -> `GND`|
-
-**Key Wiring Notes:**
--   Ensure all sensors are powered by the **3.3V** pin of the ESP32, not 5V.
--   `GPIO 34` is an input-only pin, which makes it ideal for analog readings without risk of misconfiguration.
+| Component           | Component Pin | Connect to ESP32 Pin    | Notes                                  |
+| ------------------- | ------------- | ----------------------- | -------------------------------------- |
+| **HTU21D Sensor**   | `SDA`         | `GPIO 21` (SDA)         | Shared I2C Data Line                   |
+|                     | `SCL`         | `GPIO 22` (SCL)         | Shared I2C Clock Line                  |
+|                     | `VCC` / `VIN` | `3.3V`                  |                                        |
+|                     | `GND`         | `GND`                   |                                        |
+| **BH1750 Sensor**   | `SDA`         | `GPIO 21` (SDA)         | Connect to the same pin as HTU21D's SDA |
+|                     | `SCL`         | `GPIO 22` (SCL)         | Connect to the same pin as HTU21D's SCL |
+|                     | `VCC`         | `3.3V`                  |                                        |
+|                     | `GND`         | `GND`                   |                                        |
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 -   [Visual Studio Code](https://code.visualstudio.com/) with the [PlatformIO IDE Extension](https://platformio.org/platformio-ide).
 -   [Node.js](https://nodejs.org/) (v16 or newer).
--   Git.
--   A [HiveMQ Cloud](https://www.hivemq.com/cloud/) account (the free plan is sufficient).
+-   A cloud-hosted PostgreSQL database (e.g., on [Render](https://render.com/)).
+-   A [HiveMQ Cloud](https://www.hivemq.com/cloud/) account.
 
 ### Installation & Setup
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/anndreipopa/Room-Ambiance-Monitor.git
-    cd Room-Ambiance-Monitor
+    git clone https://github.com/your-username/your-repo-name.git
+    cd your-repo-name
     ```
 
-2.  **Setup Firmware (`/firmware`):**
-    -   Create a `secrets.h` file in `firmware/src/` and add your Wi-Fi and HiveMQ credentials.
-    -   Open the `firmware` folder in VS Code. PlatformIO will automatically install the library dependencies.
-    -   Connect your ESP32 board and click the `Upload` button in the PlatformIO toolbar.
+2.  **Setup Firmware:**
+    -   Create a `secrets.h` file inside the `/src` directory with your Wi-Fi and MQTT credentials.
+    -   Use the PlatformIO extension in VS Code to build and `Upload` the firmware to your ESP32.
 
-3.  **Setup Backend (`/server`):**
-    -   Navigate to the `server` directory.
-    -   Create a `.env` file and fill it with your HiveMQ credentials.
-    -   Install the dependencies:
-        ```bash
-        npm install
-        ```
-    -   Start the server:
-        ```bash
-        node server.js
-        ```
+3.  **Setup Backend:**
+    -   Navigate to the `/BackendServer` directory: `cd BackendServer`.
+    -   Run `npm install` to install dependencies.
+    -   Create a `.env` file and fill it with your MQTT and PostgreSQL `DATABASE_URL` credentials.
+    -   Start the server for local development: `node server.js`.
 
 4.  **View the Dashboard:**
-    -   Once the server is running, open your browser and navigate to **`http://localhost:3000`**.
+    -   For local development, use a tool like the `live-server` VS Code extension in the `/frontend` directory.
+    -   Ensure your frontend's `script.js` points to your local backend (`http://localhost:3000`).
+    -   The deployed version is available at [ramdashboard.netlify.app](https://ramdashboard.netlify.app).
 
-## 🌱 Future Development & Project Roadmap
+## 🌱 Project Roadmap
 
-This project is the first phase of a larger, more ambitious goal: a fully autonomous smart gardening system. The current platform serves as a robust foundation for the following planned features:
+This project is under active development. The roadmap is structured to build upon the current stable foundation.
 
--   [ ] **Soil Moisture Sensing:** Integrate capacitive soil moisture sensors to directly monitor the plant's water needs.
--   [ ] **Data Persistence:** Implement a time-series database (e.g., **InfluxDB** or **TimescaleDB**) to store historical sensor data.
--   [ ] **Advanced Web Dashboard:**
-    -   Rebuild the frontend using a modern framework like **React** or **Vue.js**.
-    -   Visualize historical and real-time data using an interactive charting library like **Chart.js**.
--   [ ] **Autonomous Irrigation with Manual Override:**
-    -   Implement a fully **autonomous watering system** by adding a relay module to control a water pump, triggered by low soil moisture data.
-    -   Crucially, the system will include **manual override capabilities** via the web dashboard. This allows for manual watering on demand and ensures system resilience in case of sensor failure or for specific plant care needs.
--   [ ] **Alerts and Notifications:** Implement a system to send push notifications or emails for critical events, such as low soil moisture, extreme temperatures, or if the water reservoir is empty.
+-   [x] **Data Persistence:** Implement a PostgreSQL database to store historical sensor data.
+-   [x] **Advanced Data Visualization:** Build a dynamic web dashboard with Chart.js to render historical data.
+-   [ ] **Modernize Frontend:** Explore rebuilding the user interface using a modern framework like **React** for a more modular and scalable architecture.
+-   [ ] **Integrate Soil Moisture Sensors:** Add capacitive soil moisture sensors to gather the most critical data for irrigation.
+-   [ ] **Implement Control Logic:** Add a relay module and water pump, controlled via MQTT commands from the backend.
+-   [ ] **Develop Automation Algorithms:** Create logic on the server to trigger watering cycles based on soil moisture, light history, and other sensor data.
 
 ## 🙏 Acknowledgements
 
