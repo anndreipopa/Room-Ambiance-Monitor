@@ -64,6 +64,25 @@ app.get('/api/keep-alive', (req, res) => {
     res.status(200).json({ status: "Keep server ON" });
 });
 
+app.get('/weather', async (req, res) => {
+    const lat = 44.85;
+    const lon = 24.88;
+    const weatherAPI = process.env.WEATHER_API_KEY;
+    
+    
+    const weatherURL = 'https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=-${lon}&appid={weatherAPI}&units=metric';
+
+    try{
+        const response = await fetch(weatherURL);
+        const weatherData = await response.json();
+        res.json(weatherData);
+    }
+    catch (error) {
+        console.error("Eroare la obținerea datelor meteo:", error);
+        res.status(500).json({ error: "Eroare la obținerea datelor meteo" });
+    }
+});
+
 async function initDatabase(){
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS sensor_data (
