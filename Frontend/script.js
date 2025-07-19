@@ -186,6 +186,9 @@ const currentTemp = document.querySelector('.temp-txt');
 const feelsLikeTemp = document.getElementById('feelslike-temp');
 const descriptionText = document.getElementById('weather-desc');
 
+// Weather icon mapping based on OpenWeatherMap descriptions
+// This mapping is used to determine which icon to display based on the weather description and time of day
+// Icons are stored in the 'weather' directory
 const weatherIconMap = {
   "clear sky": { day: "sunny.svg", night: "clear_alt.svg" },
   "few clouds": { day: "partly_cloudy.svg", night: "partly_clear_alt.svg" },
@@ -261,7 +264,8 @@ function getWeatherIcon(description, isNight) {
             const timeString = date.toLocaleTimeString('ro-RO', { hour: 'numeric', minute: '2-digit' });
 
             // Determine if it's night or day for the icon
-            const isNight = forecast.dt < sunrise || forecast.dt > sunset;
+            const forecastHour = new Date(forecast.dt * 1000).getHours();
+            const isNight = forecastHour < 6 || forecastHour >= 21;
             const icon = getWeatherIcon(forecast.weather[0].description, isNight);
             // Setting the inner HTML for the item
             item.innerHTML = `
