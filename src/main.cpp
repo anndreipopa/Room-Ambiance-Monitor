@@ -32,7 +32,6 @@ const int sensorPin = 34;
 const int valoareIntuneric = 4095;
 const int valoareLuminaMaxima = 0;
 const float reglajTemp = -1.2;
-
 const int ledPin = 17;
 
 /*
@@ -202,7 +201,5 @@ void loop(){
     Serial.print("Publicare mesaj: ");
     Serial.println(mesaj);
     client.publish(mqttTopic, mesaj.c_str());
-    delay(5000); // asteptam 5 secunde inainte de urmato
-  
-  
+    delay(5000); // asteptam 5 secunde inainte de urmatoarea citire
 }

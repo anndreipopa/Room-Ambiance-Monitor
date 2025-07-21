@@ -50,9 +50,9 @@ const savingInterval = 30 * 60 * 1000; // intervalul de salvare a datelor în ba
 app.get('/api/history', async (req, res) => {
     try {
         console.log("Cerere GET la /api/history");
-        const query = 'SELECT temperature, humidity, light, created_at FROM sensor_data ORDER BY created_at DESC LIMIT 100';
+        const query = `SELECT temperature, humidity, light, created_at FROM sensor_data WHERE created_at >= NOW() - INTERVAL '24 hours' ORDER BY created_at DESC`;
         const {rows} = await pool.query(query);
-        res.json(rows); // trimitem ultimele 100 de înregistrări ca răspuns
+        res.json(rows); // trimitem ultimele 48 de înregistrări ca răspuns
     } catch (err) {
         console.error("Eroare la obținerea datelor din baza de date:", err);
         res.status(500).json({ error: "Eroare la interogarea bazei de date" }); // Trimite un raspuns de eroare!
