@@ -1,102 +1,149 @@
-# IoT Smart Irrigation System Prototype
+# Autonomous Smart Irrigation System
 
-[![ESP32](https://img.shields.io/badge/Hardware-ESP32-blueviolet.svg)](https://www.espressif.com/en/products/socs/esp32)
-[![PlatformIO](https://img.shields.io/badge/Firmware-PlatformIO-orange.svg)](https://platformio.org/)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js-green.svg)](https://nodejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue.svg)](https://www.postgresql.org/)
-[![JavaScript](https://img.shields.io/badge/Frontend-Vanilla_JS-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![MQTT](https://img.shields.io/badge/Protocol-MQTT-lightgrey.svg)](https://mqtt.org/)
+[![Hardware](https://img.shields.io/badge/Hardware-ESP32-blueviolet.svg)](https://www.espressif.com/en/products/socs/esp32)
+[![Firmware](https://img.shields.io/badge/Firmware-PlatformIO-orange.svg)](https://platformio.org/)
+[![Backend](https://img.shields.io/badge/Backend-Node.js-green.svg)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/Database-PostgreSQL-blue.svg)](https://www.postgresql.org/)
+[![Frontend](https://img.shields.io/badge/Frontend-Vanilla_JS-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Protocol](https://img.shields.io/badge/Protocol-MQTT-lightgrey.svg)](https://mqtt.org/)
 
-An end-to-end **Smart Irrigation System** designed to automate plant care. The current deployed prototype provides the core functionality, successfully streaming, storing, and visualizing live environmental sensor data on a globally accessible web dashboard.
+An end-to-end IoT prototype designed to bring intelligent automation to plant care. This system moves beyond simple timers, using real-time environmental data to make smart decisions. The deployed prototype successfully collects, processes, visualizes, and stores sensor data on a globally accessible web dashboard.
 
-*Images coming soon!*
+### **➡️ [View the Live Dashboard Here](https://ramdashboard.netlify.app/) ⬅️**
 
-## 🌟 Core Features
+---
 
--   **Full-Stack Real-Time Monitoring:** A complete, deployed data pipeline from a physical ESP32 sensor, through a secure cloud broker, to a live web dashboard.
--   **Precision Multi-Sensor System:**
-    -   **Air Temperature & Humidity:** Utilizes a high-precision **HTU21D** I²C sensor.
-    -   **Ambient Light Intensity:** Employs a **BH1750** digital sensor to provide accurate illuminance readings in **Lux**.
--   **Data Persistence & Visualization:** Sensor data is periodically stored in a **PostgreSQL** database and rendered in dynamic, trend-colored historical charts using **Chart.js**.
--   **Secure & Robust Communication:** Implements the MQTT protocol over a secure TLS connection and a real-time WebSocket layer for instant data delivery to the frontend.
+*<p align="center">A demo GIF/image showing the live dashboard updating will be added here soon!</p>*
 
-## 🛠️ Tech Stack
+## 🏛️ Architecture Overview
 
-### Hardware
--   **Microcontroller:** ESP32
--   **Sensors:** HTU21D (I²C), BH1750 (I²C)
+The project is built on a modern IoT architecture, ensuring a scalable and real-time data flow from the physical sensor to the user's screen.
 
-### Software & Cloud
--   **Firmware:** C++ on **Arduino Framework** with **PlatformIO**.
--   **Backend:** **Node.js** with **Express.js** & **Socket.IO**.
--   **Frontend:** **Vanilla HTML5, CSS3, and JavaScript** with **Chart.js**.
--   **Database:** **PostgreSQL** (hosted on Render).
--   **Deployment:** Backend on **Render**, Frontend on **Netlify**, with CI/CD from GitHub.
--   **MQTT Broker:** **HiveMQ Cloud**.
+1.  **Data Acquisition (Embedded):** An **ESP32** microcontroller reads temperature, humidity, and ambient light data from I²C sensors.
+2.  **Secure Transmission (IoT Protocol):** The firmware sends this data as a JSON payload over a secure **MQTT (TLS)** connection to a cloud broker (HiveMQ).
+3.  **Data Processing (Backend):** A **Node.js** server, subscribed to the MQTT topic, receives the data instantly.
+4.  **Real-time Push & Persistence (Cloud Logic):**
+    *   The backend immediately pushes the live data to all connected web clients using **WebSockets (Socket.IO)**.
+    *   It also periodically saves the readings to a **PostgreSQL** database for historical analysis.
+5.  **Data Visualization (Frontend):** A vanilla JavaScript dashboard listens for WebSocket events to display live data and fetches historical data from the backend's API to render interactive trend charts with **Chart.js**.
+
+## 🌟 Key Features
+
+-   **End-to-End Real-Time Pipeline:** A fully functioning data pipeline from a physical device to a cloud backend and a live user interface.
+-   **High-Precision Sensing:** Utilizes dedicated I²C sensors for accurate temperature/humidity (**SHT2x/HTU21D**) and ambient light (**BH1750**) readings.
+-   **Historical Data Analysis:** All sensor data is persisted, allowing for trend analysis and visualization through dynamic, interactive charts.
+-   **Scalable Cloud Deployment:** The entire system is deployed on modern cloud platforms (Render & Netlify), demonstrating a full CI/CD workflow.
+
+## 🛠️ Technology Stack
+
+| Category      | Technologies                                                                   |
+| ------------- | ------------------------------------------------------------------------------ |
+| **Hardware**  | `ESP32 Microcontroller`, `SHT2x/HTU21D`, `BH1750` I²C Sensors                    |
+| **Firmware**  | `C++`, `Arduino Framework`, `PlatformIO`                                       |
+| **Backend**   | `Node.js`, `Express.js`, `Socket.IO`, `MQTT.js`                                |
+| **Frontend**  | `Vanilla HTML5/CSS3`, `JavaScript (ES6+)`, `Chart.js`                          |
+| **Database**  | `PostgreSQL`                                                                   |
+| **Cloud & DevOps** | **Render** (Backend & DB), **Netlify** (Frontend), **Git/GitHub** (CI/CD), **HiveMQ Cloud** (MQTT Broker) |
 
 ## 📁 Project Structure
 
-This repository is a monorepo containing all parts of the application:
--   `/src`: Contains the C++ firmware for the ESP32, managed by PlatformIO.
--   `/BackendServer`: The Node.js backend server.
--   `/frontend`: The static web dashboard files (HTML, CSS, JS).
+This monorepo contains the complete application stack:
+
+-   `src/`: C++ firmware for the ESP32, managed by PlatformIO.
+-   `BackendServer/`: The Node.js, Express, and Socket.IO backend server.
+-   `frontend/`: All static assets for the web dashboard (HTML, CSS, JavaScript).
 
 ## 🔌 Hardware Setup & Wiring
 
-Both I2C sensors (HTU21D and BH1750) share the same I2C bus, simplifying the wiring.
-
-| Component           | Component Pin | Connect to ESP32 Pin    | Notes                                  |
-| ------------------- | ------------- | ----------------------- | -------------------------------------- |
-| **HTU21D Sensor**   | `SDA`         | `GPIO 21` (SDA)         | Shared I2C Data Line                   |
-|                     | `SCL`         | `GPIO 22` (SCL)         | Shared I2C Clock Line                  |
-|                     | `VCC` / `VIN` | `3.3V`                  |                                        |
-|                     | `GND`         | `GND`                   |                                        |
-| **BH1750 Sensor**   | `SDA`         | `GPIO 21` (SDA)         | Connect to the same pin as HTU21D's SDA |
-|                     | `SCL`         | `GPIO 22` (SCL)         | Connect to the same pin as HTU21D's SCL |
-|                     | `VCC`         | `3.3V`                  |                                        |
-|                     | `GND`         | `GND`                   |                                        |
+| Component | Pin   | ESP32 Pin       | Notes                           |
+| --------- | ----- | --------------- | ------------------------------- |
+| **SHT2x** | `SDA` | `GPIO 21` (SDA) | Shared I²C Data Line            |
+|           | `SCL` | `GPIO 22` (SCL) | Shared I²C Clock Line           |
+|           | `VIN` | `3.3V`          |                                 |
+|           | `GND` | `GND`           |                                 |
+| **BH1750**| `SDA` | `GPIO 21` (SDA) | Shared with SHT2x               |
+|           | `SCL` | `GPIO 22` (SCL) | Shared with SHT2x               |
+|           | `VCC` | `3.3V`          |                                 |
+|           | `GND` | `GND`           |                                 |
 
 ## 🚀 Getting Started
 
 ### Prerequisites
--   [Visual Studio Code](https://code.visualstudio.com/) with the [PlatformIO IDE Extension](https://platformio.org/platformio-ide).
--   [Node.js](https://nodejs.org/) (v16 or newer).
--   A cloud-hosted PostgreSQL database (e.g., on [Render](https://render.com/)).
--   A [HiveMQ Cloud](https://www.hivemq.com/cloud/) account.
+-   [Node.js](https://nodejs.org/) (v18 or newer)
+-   [VS Code](https://code.visualstudio.com/) with the [PlatformIO IDE Extension](https://platformio.org/platformio-ide)
+-   A free PostgreSQL database from [Render](https://render.com/)
+-   A free account on [HiveMQ Cloud](https://www.hivemq.com/cloud/)
 
-### Installation & Setup
-1.  **Clone the Repository:**
-    ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+### 1. Clone the Repository
+```bash
+git clone https://github.com/annndreipopa/Room-Ambiance-Monitor.git
+cd Room-Ambiance-Monitor
+```
+
+### 2. Configure and Deploy Firmware
+-   In the `/src` directory, create a new file named `secrets.h`.
+-   Copy the content below into `secrets.h` and fill in your credentials:
+    ```cpp
+    #pragma once
+    // Wi-Fi Credentials
+    #define WIFI_SSID "YOUR_WIFI_SSID"
+    #define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+    // MQTT Broker Credentials
+    #define MQTT_HOST "your-cluster-url.s1.eu.hivemq.cloud"
+    #define MQTT_PORT 8883
+    #define MQTT_USER "YOUR_HIVE_MQ_USERNAME"
+    #define MQTT_PASSWORD "YOUR_HIVE_MQ_PASSWORD"
+    #define MQTT_TOPIC "esp32/data"
+    
+    // HiveMQ Cloud CA Certificate
+    static const char* aCACert = R"EOF(
+    -----BEGIN CERTIFICATE-----
+    // PASTE YOUR HIVEMQ CA CERTIFICATE HERE
+    -----END CERTIFICATE-----
+    )EOF";
     ```
+-   Open the project in VS Code, and use the PlatformIO extension to **Build** and **Upload** the firmware to your ESP32.
 
-2.  **Setup Firmware:**
-    -   Create a `secrets.h` file inside the `/src` directory with your Wi-Fi and MQTT credentials.
-    -   Use the PlatformIO extension in VS Code to build and `Upload` the firmware to your ESP32.
+### 3. Configure and Run Backend
+-   Navigate to the backend directory: `cd BackendServer`.
+-   Install dependencies: `npm install`.
+-   Create a `.env` file in this directory.
+-   Copy the content below into `.env` and fill in your credentials:
+    ```env
+    # MQTT Credentials
+    MQTT_HOST=your-cluster-url.s1.eu.hivemq.cloud
+    MQTT_PORT=8883
+    MQTT_USER=YOUR_HIVE_MQ_USERNAME
+    MQTT_PASSWORD=YOUR_HIVE_MQ_PASSWORD
+    MQTT_TOPIC=esp32/data
 
-3.  **Setup Backend:**
-    -   Navigate to the `/BackendServer` directory: `cd BackendServer`.
-    -   Run `npm install` to install dependencies.
-    -   Create a `.env` file and fill it with your MQTT and PostgreSQL `DATABASE_URL` credentials.
-    -   Start the server for local development: `node server.js`.
+    # PostgreSQL Database Connection URL
+    DATABASE_URL=postgresql://user:password@host:port/database
 
-4.  **View the Dashboard:**
-    -   For local development, use a tool like the `live-server` VS Code extension in the `/frontend` directory.
-    -   Ensure your frontend's `script.js` points to your local backend (`http://localhost:3000`).
-    -   The deployed version is available at [ramdashboard.netlify.app](https://ramdashboard.netlify.app).
+    # Server Port
+    PORT=3000
+    ```
+-   Start the server locally: `npm start` or `node server.js`.
+
+### 4. View the Dashboard
+-   The deployed version is ready to view at [ramdashboard.netlify.app](https://ramdashboard.netlify.app).
+-   For local development, use an extension like **Live Server** in VS Code on the `index.html` file in the `/frontend` directory. Ensure the `socket` connection in `script.js` points to your local server (`http://localhost:3000`).
 
 ## 🌱 Project Roadmap
 
-This project is under active development. The roadmap is structured to build upon the current stable foundation.
+This project serves as the foundation for a fully autonomous system. The next steps are:
 
--   [x] **Data Persistence:** Implement a PostgreSQL database to store historical sensor data.
--   [x] **Advanced Data Visualization:** Build a dynamic web dashboard with Chart.js to render historical data.
--   [ ] **Modernize Frontend:** Explore rebuilding the user interface using a modern framework like **React** for a more modular and scalable architecture.
--   [ ] **Integrate Soil Moisture Sensors:** Add capacitive soil moisture sensors to gather the most critical data for irrigation.
--   [ ] **Implement Control Logic:** Add a relay module and water pump, controlled via MQTT commands from the backend.
--   [ ] **Develop Automation Algorithms:** Create logic on the server to trigger watering cycles based on soil moisture, light history, and other sensor data.
+-   [ ] **Modernize Frontend:** Rebuild the UI with a modern framework like **React** or **Svelte** for better state management and component modularity.
+-   [ ] **Integrate Control Hardware:** Add a relay module and a 12V water pump to the ESP32 circuit.
+-   [ ] **Implement Control API:** Create secure backend endpoints to send watering commands to the device via MQTT.
+-   [ ] **Develop Autonomous Logic:** Implement algorithms on the server to trigger irrigation cycles automatically based on historical data and real-time sensor readings (e.g., "if soil is dry AND it hasn't rained, water for 10 seconds").
+-   [ ] **Add Soil Moisture Sensing:** Incorporate capacitive soil moisture sensors as the primary trigger for automation.
 
-## 🙏 Acknowledgements
+## 🤝 Contributing
 
-This project is a learning journey inspired by the incredible maker community. Special thanks to the authors of the open-source libraries that make IoT development accessible and powerful.
+This is a personal learning project, but suggestions and contributions are always welcome! Feel free to open an issue or submit a pull request.
+
+## 📜 License
+
+This project is open-source. Feel free to use the code for your own projects. Please consider giving credit if it helps you significantly.
