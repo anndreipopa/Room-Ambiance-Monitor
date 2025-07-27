@@ -13,7 +13,7 @@ An end-to-end IoT prototype designed to bring intelligent automation to plant ca
 
 ---
 
-*<p align="center">A demo GIF/image showing the live dashboard updating will be added here soon!</p>*
+![Wiring Diagram](./Diag27Jul.png)
 
 ## 🏛️ Architecture Overview
 
