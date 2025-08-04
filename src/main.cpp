@@ -112,10 +112,10 @@ void wifiSetup(){
   Serial.println("Wi-Fi conectat! IP:");
   Serial.println(WiFi.localIP());
 }
-// setup MQTT
-void mqttSetup(){
+// MQTT conectare
+void reconnectMQTT(){
   Serial.print("Conectare la broker MQTT: ");
-  String clientID = "ESP32Client-"; //ID UNIC pentru client
+  String clientID = "ESP32Client"; //ID UNIC pentru client
   clientID += String(random(0xffff), HEX);
   if(client.connect(clientID.c_str(), mqttUser, mqttPassword)){
     Serial.println("Conectat la broker MQTT!");
@@ -155,7 +155,7 @@ void setup() {
 void loop(){
   // put your main code here, to run repeatedly:
   if(!client.connected()){
-    mqttSetup();
+    reconnectMQTT();
   }
   client.loop(); // mentinem conexiunea MQTT activa
   
@@ -191,15 +191,16 @@ void loop(){
   } else {
     Serial.println("Eroare la citirea datelor de la senzorul de aer!");
   }
-    String mesaj = "{";
-    mesaj += "\"lumina\":" + String(lumina) + ",";
-    mesaj += "\"descriereLumina\":\"" + String(descriere.c_str()) + "\",";
-    mesaj += "\"temperatura\":" + String(dateAer.temperatura, 1) + ",";
-    mesaj += "\"umiditate\":" + String(dateAer.umiditate, 1);
-    mesaj += "}";
+    char mesaj[256];
+    snprintf(mesaj, sizeof(mesaj),
+             "{\"lumina\": %d, \"descriereLumina\": \"%s\", \"temperatura\": %.1f, \"umiditate\": %.1f}",
+             lumina, 
+             descriere.c_str(), 
+             dateAer.temperatura, 
+             dateAer.umiditate);
 
     Serial.print("Publicare mesaj: ");
     Serial.println(mesaj);
-    client.publish(mqttTopic, mesaj.c_str());
+    client.publish(mqttTopic, mesaj);
     delay(5000); // asteptam 5 secunde inainte de urmatoarea citire
 }
