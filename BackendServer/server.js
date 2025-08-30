@@ -84,7 +84,7 @@ app.get('/weather', async (req, res) => {
     }
 });
 
-async function initDatabase(){
+/*async function initDatabase(){
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS sensor_data (
         id SERIAL PRIMARY KEY,
@@ -118,7 +118,7 @@ async function logDataToDatabase() {
     } else {
         console.log("Nu sunt date de salvat în baza de date");
     }
-}
+} */
 
 
 
