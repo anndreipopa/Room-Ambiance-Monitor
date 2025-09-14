@@ -84,7 +84,7 @@ app.get('/weather', async (req, res) => {
     }
 });
 
-/*async function initDatabase(){
+async function initDatabase(){
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS sensor_data (
         id SERIAL PRIMARY KEY,
@@ -118,7 +118,7 @@ async function logDataToDatabase() {
     } else {
         console.log("Nu sunt date de salvat în baza de date");
     }
-} */
+}
 
 
 
@@ -128,9 +128,9 @@ async function logDataToDatabase() {
 
 async function start() {
 
-    //await initDatabase(); // inițializăm baza de date și creăm tabelul dacă nu există
+await initDatabase(); // inițializăm baza de date și creăm tabelul dacă nu există
 
-    //setInterval(logDataToDatabase, savingInterval); // setăm un interval pentru a salva datele în baza de date la fiecare 5 minute
+setInterval(logDataToDatabase, savingInterval); // setăm un interval pentru a salva datele în baza de date la fiecare 5 minute
 
 const host = process.env.MQTT_HOST;
 const port = process.env.MQTT_PORT;

@@ -34,11 +34,12 @@ const int valoareLuminaMaxima = 0;
 const float reglajTemp = -1.2;
 const int ledPin = 17;
 
-/*
-const int sensorPinSol = 35;
+
+const int sensorSolData = 34;
+const int sensorSolPower = 26;
 const int valoareSolUscat = 4095;
 const int valoareSolUmed = 0;
-*/
+
 
 struct DateAer{
   float temperatura;
@@ -91,15 +92,14 @@ string getDescriereLumina(float valoareLumina){
 
 
 
-/*void citesteUmiditateSol(){
-int valoareSol = analogRead(sensorPinSol);
-int procentajUmiditate = map(valoareSol, valoareSolUscat, valoareSolUmed, 0, 100);
-  procentajUmiditate = constrain(procentajUmiditate, 0, 100);
-  Serial.print("Valoare umiditate sol: ");
-  Serial.print(valoareSol);
-  Serial.println("%");
-
-} */
+void citesteUmiditateSol(){
+    pinMode(sensorSolPower, OUTPUT);
+    digitalWrite(sensorSolPower, HIGH); // pornim alimentarea senzorului de umiditate sol
+    delay(100); // asteptam 100ms pentru a permite senzorului sa se stabilizeze
+    int valoareUmiditate = analogRead(sensorSolData); // citim valoarea de la senzorul de umiditate sol
+    digitalWrite(sensorSolPower, LOW); // oprim alimentarea senzorului de um
+    Serial.println(valoareUmiditate);
+} 
 // setup WiFi
 void wifiSetup(){
   Serial.print("Conectare la retea WiFi: ");
@@ -202,5 +202,8 @@ void loop(){
     Serial.print("Publicare mesaj: ");
     Serial.println(mesaj);
     client.publish(mqttTopic, mesaj);
+    Serial.println(" ");
+    Serial.println("Citire umiditate sol:");
+    citesteUmiditateSol();
     delay(5000); // asteptam 5 secunde inainte de urmatoarea citire
 }
