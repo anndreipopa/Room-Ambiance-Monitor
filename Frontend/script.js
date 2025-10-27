@@ -308,3 +308,25 @@ function getWeatherIcon(description, isNight) {
     .catch(error => {
         console.error('Eroare la obținerea sau afișarea datelor meteo:', error);
     });
+
+
+    // MQTT SETUP FOR PUMP CONTROL
+
+    const pumpOnBtn = document.getElementById('pumpOn');
+    const pumpOffBtn = document.getElementById('pumpOff');
+    const pumpStatusText = document.getElementById('pumpStatus');
+
+    pumpOnBtn.addEventListener('click', () => {
+        socket.emit('pumpCommand', 'ON');
+        pumpStatusText.textContent = 'Pump is ON';
+    });
+
+    pumpOffBtn.addEventListener('click', () => {
+        socket.emit('pumpCommand', 'OFF');
+        pumpStatusText.textContent = 'Pump is OFF';
+    });
+
+    socket.on('pumpStatus', (status) => {
+        pumpStatusText.textContent = `Pump is ${status}`;
+        pumpStatusText.style.color = status === 'ON' ? 'green' : 'red';
+        });

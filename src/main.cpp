@@ -18,6 +18,8 @@ const char* mqttPassword = MQTT_PASSWORD;
 
 //topic MQTT
 const char* mqttTopic = MQTT_TOPIC;
+const char* topicPompaCmd = "monitor/andrei/pompa/cmd";
+const char* topicPompaStatus = "monitor/andrei/pompa/status";
 const char* caCert = aCACert;
 
 WiFiClientSecure espClient;
@@ -34,6 +36,7 @@ const int valoareLuminaMaxima = 0;
 const float reglajTemp = -1.2;
 const int ledPin = 17;
 
+const int pinPompa = 4;
 
 const int sensorSolData = 34;
 const int sensorSolPower = 26;
@@ -125,6 +128,35 @@ void reconnectMQTT(){
     Serial.println(" Reincercare in 5 secunde...");
     delay(5000);
   }
+  client.subscribe(topicPompaCmd); // pump command topic
+  }
+
+  void setPump(bool on){
+    digitalWrite(pinPompa, on ? HIGH : LOW);
+    client.publish(topicPompaStatus, on ? "ON" : "OFF", true); // retain last status
+    Serial.print("Pump is: ");
+    Serial.println(on ? "ON" : "OFF");
+  }
+
+  void callback(char* topic, byte* payload, unsigned int length){
+    String message;
+    for(unsigned int i=0;i<length;i++){
+      message = message + (char)payload[i];
+    }
+    Serial.print("Message received on topic: ");
+    Serial.print(topic);
+    Serial.print(". Message ");
+    Serial.println(message);
+
+    if(String(topic) == topicPompaCmd){
+      if(message == "ON"){
+        setPump(true);
+      } else if(message == "OFF"){
+        setPump(false);
+      }
+    } else {
+      Serial.println("Unknown command.");
+    }
   }
 
 void setup() {
@@ -139,7 +171,12 @@ void setup() {
   wifiSetup();
   espClient.setCACert(caCert); // setam certificatul CA pentru conexiunea securizata
   client.setServer(mqttServer, mqttPort);
+  client.setCallback(callback);
   
+  pinMode(pinPompa, OUTPUT);
+  digitalWrite(pinPompa, LOW); // pump is off by default
+  client.publish(topicPompaStatus, "OFF", true); // retain last status
+
   if(senzorAer.read()){
     Serial.println("Senzor aer initializat cu succes!");
   } else {
