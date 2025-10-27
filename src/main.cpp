@@ -95,14 +95,32 @@ string getDescriereLumina(float valoareLumina){
 
 
 
-void citesteUmiditateSol(){
+int citesteUmiditateSol(){
     pinMode(sensorSolPower, OUTPUT);
     digitalWrite(sensorSolPower, HIGH); // pornim alimentarea senzorului de umiditate sol
     delay(100); // asteptam 100ms pentru a permite senzorului sa se stabilizeze
     int valoareUmiditate = analogRead(sensorSolData); // citim valoarea de la senzorul de umiditate sol
     digitalWrite(sensorSolPower, LOW); // oprim alimentarea senzorului de um
     Serial.println(valoareUmiditate);
+    return valoareUmiditate;
 } 
+
+void startPumpSoilHumidity(){
+  int valoareUmiditate = citesteUmiditateSol();
+  int startPumpThreshold = 2800;
+  int stopPumpThreshold = 1300;
+
+  static bool pumpRunning = false;
+
+  if(valoareUmiditate > startPumpThreshold && !pumpRunning){
+    digitalWrite(pinPompa, LOW); // pornim pompa
+    pumpRunning = true;
+  }
+  else if(valoareUmiditate < stopPumpThreshold && pumpRunning){
+    digitalWrite(pinPompa, HIGH); // oprim pompa
+    pumpRunning = false;
+}
+}
 // setup WiFi
 void wifiSetup(){
   Serial.print("Conectare la retea WiFi: ");
@@ -132,11 +150,12 @@ void reconnectMQTT(){
   }
 
   void setPump(bool on){
-    digitalWrite(pinPompa, on ? HIGH : LOW);
+    digitalWrite(pinPompa, on ? LOW : HIGH);
     client.publish(topicPompaStatus, on ? "ON" : "OFF", true); // retain last status
     Serial.print("Pump is: ");
     Serial.println(on ? "ON" : "OFF");
   }
+
 
   void callback(char* topic, byte* payload, unsigned int length){
     String message;
@@ -174,7 +193,7 @@ void setup() {
   client.setCallback(callback);
   
   pinMode(pinPompa, OUTPUT);
-  digitalWrite(pinPompa, LOW); // pump is off by default
+  digitalWrite(pinPompa, HIGH); // pump is off by default
   client.publish(topicPompaStatus, "OFF", true); // retain last status
 
   if(senzorAer.read()){
@@ -195,6 +214,12 @@ void loop(){
     reconnectMQTT();
   }
   client.loop(); // mentinem conexiunea MQTT activa
+
+  static unsigned long lastReadTime = 0;
+  unsigned long now = millis();
+
+  if (now - lastReadTime >= 5000) { // citim la fiecare 5 secunde
+    lastReadTime = now;
   
   int lumina = getLumina();
   string descriere = getDescriereLumina(lumina);
@@ -242,5 +267,6 @@ void loop(){
     Serial.println(" ");
     Serial.println("Citire umiditate sol:");
     citesteUmiditateSol();
-    delay(5000); // asteptam 5 secunde inainte de urmatoarea citire
-}
+    startPumpSoilHumidity();
+  }
+} 
