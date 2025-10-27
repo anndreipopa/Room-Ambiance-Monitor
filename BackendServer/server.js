@@ -164,6 +164,21 @@ client.on('message', (topic, message) => {
     io.emit('sensorData', data); // trimite datele către toți clienții conectați prin WebSocket
 });
 
+client.on('message', (topic, message) => {
+    if (topic === "monitor/andrei/pompa/status"){
+        io.emit("pumpStatus", message.toString()); //trimite status in dashboard
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log("Dashboard connected");
+
+    socket.on("pumpCommand", (cmd) => {
+        console.log('Pump: ${cmd}');
+        client.publish("monitor/andrei/pompa/cmd", cmd);
+    });
+});
+
 server.listen(webPort, () => {
     console.log(`Dashboard-ul este pe localhost: ${webPort}`);
 });
